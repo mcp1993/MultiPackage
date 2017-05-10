@@ -1,0 +1,60 @@
+Android 多渠道打包——友盟多渠道打包
+1.gradle（module）添加：
+    dependencies {
+     compile 'com.umeng.analytics:analytics:latest.integration';
+     }
+2.gradle(project)添加：
+    allprojects {
+        repositories {
+            mavenCentral()
+        }
+
+3.在AndroidManifest中添加：
+  <meta-data android:value="591122c975ca350302001979" android:name="UMENG_APPKEY"/>
+   <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
+
+   和权限：
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+   <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+4.gradle（module）添加：
+    defaultConfig{
+      multiDexEnabled true //突破应用方法数65535的限制
+      manifestPlaceholders = [UMENG_CHANNEL_VALUE:"umeng"]}
+    }
+
+      //添加签名文件配置
+        signingConfigs{
+            debug{
+
+            }
+            //release包 签名文件配置
+            release{
+                storeFile file("mcp1127.keystore")
+                storePassword "mcp1127"
+                keyAlias "mcp1127"
+                keyPassword "mcp1127"
+            }
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                signingConfig signingConfigs.release
+            }
+        }
+
+
+        productFlavors{
+            xiaomi{
+                manifestPlaceholders =[UMENG_CHANNEL_VALUE:"xiaomi"]
+            }
+            wandoujia{
+                manifestPlaceholders =[UMENG_CHANNEL_VALUE:"wandoujia"]
+            }
+        }
+
+5.Build-->Generate Singed APK
